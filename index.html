@@ -117,7 +117,10 @@ nav .links a:hover{color:var(--ink)}
 .about li span{color:var(--mute);font-size:15px}
 .about li:nth-child(even){border-color:var(--teal)}
 @media(max-width:760px){.about{grid-template-columns:1fr}}
-.contact .addr{margin-top:14px;font-size:15px;opacity:.9}
+.contact .addr{margin-top:14px;font-size:15px;display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.copy{min-height:40px;padding:0 14px;border-radius:4px;border:1px solid #fff;background:none;color:#fff;font:600 14px Barlow,sans-serif;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.12)}
+.copied{font-size:14px;color:var(--or);font-weight:600}
 footer{padding:22px max(5vw,16px);color:var(--mute);font-size:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 /* lightbox */
 dialog{border:0;padding:0;background:var(--bg);color:var(--ink);width:min(1200px,98vw);max-width:none;height:94vh;max-height:none;border-radius:8px;overflow:hidden}
@@ -164,7 +167,7 @@ dialog::backdrop{background:rgba(0,0,0,.88)}
       <img class="poster" id="poster" src="m_bedroom1.jpg" alt="Bedroom SketchUp model">
       <div class="start" id="start"><button class="btn red" id="startBtn">Open the 3D model</button><p>About 14 MB</p></div>
       <div class="status" id="status" hidden><span id="statusText"></span><div class="bar"><i id="bar"></i></div></div>
-      <span class="hint">Drag to rotate · pinch or scroll to zoom · two fingers or right-drag to pan</span>
+      <span class="hint">Drag to rotate · scroll or pinch to zoom · hold the mouse wheel, right-drag or two fingers to pan</span>
     </div>
     <div class="tools">
       <div class="seg" id="pickMode" role="group" aria-label="Style">
@@ -227,7 +230,7 @@ dialog::backdrop{background:rgba(0,0,0,.88)}
     <a class="btn solid" href="mailto:sabsab.comics@gmail.com?subject=SketchUp%20set%20for%20my%20comic">Email me</a>
     <a class="btn" href="https://instagram.com/looploop_art" target="_blank" rel="noopener">Instagram @looploop_art</a>
   </div>
-  <p class="addr">sabsab.comics@gmail.com</p>
+  <p class="addr"><span id="mail">sabsab.comics@gmail.com</span> <button class="copy" id="copyMail" type="button">Copy email</button><span id="copied" class="copied" aria-live="polite"></span></p>
 </div></section>
 
 <footer><span>© Taha Sabry [LOOP]</span><a href="https://tahasabryart.github.io" target="_blank" rel="noopener">Comic portfolio →</a></footer>
@@ -405,6 +408,16 @@ document.addEventListener('click', e => {
   const n = im.getAttribute('src').replace(/\.jpg$/,'');
   openLB(im.alt, [n], '');
 });
+/* copy email */
+document.getElementById('copyMail').addEventListener('click', async () => {
+  const t = document.getElementById('mail').textContent, out = document.getElementById('copied');
+  let ok = false;
+  try { await navigator.clipboard.writeText(t); ok = true; } catch (e) {
+    try { const r = document.createRange(); r.selectNodeContents(document.getElementById('mail')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); ok = document.execCommand('copy'); } catch (e2) {}
+  }
+  out.textContent = ok ? 'Copied!' : 'Select and copy the address';
+  setTimeout(() => out.textContent = '', 2500);
+});
 }
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
@@ -467,6 +480,9 @@ const boot = async () => {
     const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 5000);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIGHT: THREE.MOUSE.PAN };
+    controls.screenSpacePanning = true;
+    renderer.domElement.addEventListener('mousedown', e => { if (e.button === 1) e.preventDefault(); });
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     controls.autoRotate = !reduced; controls.autoRotateSpeed = 0.6;
     controls.addEventListener('start', () => controls.autoRotate = false);

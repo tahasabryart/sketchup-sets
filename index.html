@@ -161,7 +161,7 @@ dialog::backdrop{background:rgba(0,0,0,.88)}
   <p class="lead">The actual SketchUp model behind my bedroom pages. Rotate it, zoom in, and switch between model and line extraction to see the clean lines I draw over.</p>
   <div class="viewer" id="viewer">
     <div class="stage" id="stage">
-      <img class="poster" id="poster" src="img/m_bedroom1.jpg" alt="Bedroom SketchUp model">
+      <img class="poster" id="poster" src="m_bedroom1.jpg" alt="Bedroom SketchUp model">
       <div class="start" id="start"><button class="btn red" id="startBtn">Open the 3D model</button><p>About 14 MB</p></div>
       <div class="status" id="status" hidden><span id="statusText"></span><div class="bar"><i id="bar"></i></div></div>
       <span class="hint">Drag to rotate · pinch or scroll to zoom · two fingers or right-drag to pan</span>
@@ -179,9 +179,9 @@ dialog::backdrop{background:rgba(0,0,0,.88)}
   <h2>From SketchUp to page</h2>
   <p class="lead">The 3D set is not the final art. It is the skeleton that keeps perspective right and saves hours on every panel.</p>
   <div class="steps">
-    <div class="step"><figure><img src="img/m_bedroom2.jpg" data-z alt="Bedroom model from above" loading="lazy"></figure><h3><span class="n">1</span> Build it in SketchUp</h3><p>Every wall, shelf and object modelled once.</p></div>
-    <div class="step"><figure><img src="img/m_bedroom1.jpg" data-z alt="Bedroom model from a low angle" loading="lazy"></figure><h3><span class="n">2</span> Choose the shot</h3><p>Move the camera like a film set: wide shots, close-ups, any lens.</p></div>
-    <div class="step"><figure class="dark"><img src="img/c_illustryyation.jpg" data-z alt="Finished comic page in the bedroom" loading="lazy"></figure><h3><span class="n">3</span> Ink and color</h3><p>Draw over the render by hand so it reads as comic art, not 3D.</p></div>
+    <div class="step"><figure><img src="m_bedroom2.jpg" data-z alt="Bedroom model from above" loading="lazy"></figure><h3><span class="n">1</span> Build it in SketchUp</h3><p>Every wall, shelf and object modelled once.</p></div>
+    <div class="step"><figure><img src="m_bedroom1.jpg" data-z alt="Bedroom model from a low angle" loading="lazy"></figure><h3><span class="n">2</span> Choose the shot</h3><p>Move the camera like a film set: wide shots, close-ups, any lens.</p></div>
+    <div class="step"><figure class="dark"><img src="c_illustryyation.jpg" data-z alt="Finished comic page in the bedroom" loading="lazy"></figure><h3><span class="n">3</span> Ink and color</h3><p>Draw over the render by hand so it reads as comic art, not 3D.</p></div>
   </div>
 </div></section>
 
@@ -241,7 +241,7 @@ dialog::backdrop{background:rgba(0,0,0,.88)}
 
 <script>
 {
-const I = n => 'img/' + n + '.jpg';
+const I = n => n + '.jpg';
 /* hide the top bar while scrolling down, bring it back when scrolling up */
 const navEl = document.querySelector('nav'); let lastY = scrollY;
 addEventListener('scroll', () => { const y = scrollY; if (Math.abs(y - lastY) < 6) return; navEl.classList.toggle('away', y > lastY && y > 120); lastY = y; }, {passive:true});
@@ -402,7 +402,7 @@ document.getElementById('pagesGrid').addEventListener('click', e => {
 });
 document.addEventListener('click', e => {
   const im = e.target.closest('img[data-z]'); if (!im) return;
-  const n = im.getAttribute('src').replace(/^img\//,'').replace(/\.jpg$/,'');
+  const n = im.getAttribute('src').replace(/\.jpg$/,'');
   openLB(im.alt, [n], '');
 });
 }
@@ -454,7 +454,7 @@ const boot = async () => {
     const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
     const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
     say('Downloading the bedroom model…', 0);
-    const buf = await fetchGLB('assets/bedroom');
+    const buf = await fetchGLB('bedroom');
     say('Building the scene…', 100);
     const gltf = await new GLTFLoader().parseAsync(buf, '');
     const root = gltf.scene;
